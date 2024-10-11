@@ -136,7 +136,7 @@ try {
     "commitlint.config.js"
   );
   execSync(
-    "npx husky add .husky/commit-msg \"npx --no-install commitlint --edit '$1'\"",
+    'npx husky add .husky/commit-msg "npx --no-install commitlint --edit',
     { stdio: "inherit" }
   );
   execSync("npm install --save-dev commitizen", { stdio: "inherit" });
