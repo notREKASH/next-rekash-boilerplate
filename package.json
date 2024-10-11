@@ -1,9 +1,9 @@
 {
-  "name": "rekash-next-boilerplate",
+  "name": "create-rekash-next-app",
   "version": "0.0.1",
   "description": "Boilerplate for Next.js with TypeScript, ESLint, Prettier, Husky, and more",
   "bin": {
-    "rekash-next-boilerplate": "./scripts/setup.bat"
+    "create-rekash-next-app": "./scripts/setup.bat"
   },
   "repository": {
     "type": "git",
