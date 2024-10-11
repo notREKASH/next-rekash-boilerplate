@@ -19,7 +19,6 @@ This project is a boilerplate for Nextjs projects, it includes a basic setup for
 
 ## How to use
 
-1. Clone the repository
-2. Go in parent folder of the cloned repository
-3. Run `./rekash-next-boilerplate/setup.sh`
-4. Done, you can now start the development server with `npm run dev`
+```bash
+npx rekash-next-boilerplate <project-name>
+```
