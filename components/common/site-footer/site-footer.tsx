@@ -13,7 +13,7 @@ export function SiteFooter() {
               target="_blank"
               rel="noreferrer">
               <span className="sr-only">{link.name}</span>
-              {link.icon && <link.icon className="text-lg" />}
+              {link.icon && <link.icon className="size-5" />}
             </Link>
           ))}
         </div>
