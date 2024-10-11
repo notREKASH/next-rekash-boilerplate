@@ -2,7 +2,10 @@ const { execSync } = require("child_process");
 const fs = require("fs");
 const path = require("path");
 
-// Récupérer le nom du projet depuis les arguments
+// Get script directory
+const scriptDir = path.resolve(__dirname, "..");
+
+// Get project name from command line
 const projectName = process.argv[2];
 
 if (!projectName) {
@@ -13,31 +16,89 @@ if (!projectName) {
 console.log(`Creating project ${projectName}`);
 
 try {
-  // Créer un nouveau projet Next.js
+  // Create the project with Next.js
   execSync(
     `npx create-next-app@latest ${projectName} --typescript --eslint --tailwind --no-src-dir --app --no-import-alias`,
     { stdio: "inherit" }
   );
 
-  // Naviguer dans le projet
+  // Navigate to the project directory
   process.chdir(projectName);
+
+  // Change the default branch to main
+  execSync("git branch -M main", { stdio: "inherit" });
+
+  // Paths of the directories
+  const COMPONENTS_DIR = "components";
+  const DATA_DIR = "data";
+  const VSCODE_DIR = ".vscode";
+
+  // Create the components directories
+  fs.mkdirSync(path.join(COMPONENTS_DIR, "common", "site-header"), {
+    recursive: true,
+  });
+  fs.mkdirSync(path.join(COMPONENTS_DIR, "common", "site-footer"), {
+    recursive: true,
+  });
+  fs.mkdirSync(path.join(COMPONENTS_DIR, "navigation", "main-nav"), {
+    recursive: true,
+  });
+  fs.mkdirSync(path.join(COMPONENTS_DIR, "navigation", "mobile-nav"), {
+    recursive: true,
+  });
+  fs.mkdirSync(path.join(COMPONENTS_DIR, "navigation", "social-nav"), {
+    recursive: true,
+  });
+  fs.mkdirSync(path.join(COMPONENTS_DIR, "navigation", "mobile-link"), {
+    recursive: true,
+  });
+  fs.mkdirSync(path.join(COMPONENTS_DIR, "common", "theme-toggle"), {
+    recursive: true,
+  });
+  fs.mkdirSync(path.join(COMPONENTS_DIR, "providers"), { recursive: true });
+
+  // Create the data and vscode directories
+  fs.mkdirSync(DATA_DIR, { recursive: true });
+  fs.mkdirSync(VSCODE_DIR, { recursive: true });
+
+  console.log("Created project folders");
+
+  // Reset app/globals.css
+  const globalsCssPath = path.join("app", "globals.css");
+
+  fs.writeFileSync(
+    globalsCssPath,
+    `
+    @tailwind base;
+    @tailwind components;
+    @tailwind utilities;
+    `
+  );
+
+  console.log("Reset global.css");
 
   console.log("Installing additional dependencies...");
 
-  // Installer des dépendances supplémentaires
+  // Install shadcn/ui with default settings and add components
+  execSync("npx shadcn@latest init -d", { stdio: "inherit" });
+  execSync("npx shadcn@latest add button", { stdio: "inherit" });
+  execSync("npx shadcn@latest add sheet", { stdio: "inherit" });
+  execSync("npx shadcn@latest add dropdown-menu", { stdio: "inherit" });
+
+  // Install react-icons and next-themes
   execSync("npm install react-icons next-themes", { stdio: "inherit" });
+
+  // Install ESLint, Prettier and plugins
   execSync(
     "npm install -D eslint eslint-plugin-tailwindcss @typescript-eslint/parser @eslint/js typescript-eslint prettier prettier-plugin-tailwindcss",
     { stdio: "inherit" }
   );
 
-  // Configuration ESLint et Prettier
+  // Setup ESLint and Prettier configuration
   console.log("Setting up ESLint and Prettier configuration...");
   if (fs.existsSync(".eslintrc.json")) {
     fs.renameSync(".eslintrc.json", ".eslintrc.js");
   }
-
-  const scriptDir = path.resolve(__dirname, "..");
 
   fs.copyFileSync(
     path.join(scriptDir, "templates/.eslintrc.js"),
@@ -49,9 +110,11 @@ try {
   );
   fs.copyFileSync(path.join(scriptDir, "templates/.prettierrc"), ".prettierrc");
 
-  // Installer Husky et lint-staged
+  // Setup Husky and lint-staged
   console.log("Setting up Husky and lint-staged...");
-  execSync("npx husky-init && npm install", { stdio: "inherit" });
+  execSync("npx husky-init", { stdio: "inherit" });
+  execSync("npm install", { stdio: "inherit" });
+  fs.rmSync(".husky/pre-commit");
   execSync("npm install --save-dev lint-staged", { stdio: "inherit" });
   execSync('npx husky add .husky/pre-commit "npx lint-staged npm run lint"', {
     stdio: "inherit",
@@ -62,7 +125,7 @@ try {
     ".lintstagedrc.json"
   );
 
-  // Installer Commitlint et Commitizen
+  // Setup Commitlint and Commitizen
   console.log("Setting up commitlint and commitizen...");
   execSync(
     'npm install --save-dev "@commitlint/cli" "@commitlint/config-conventional"',
@@ -82,7 +145,7 @@ try {
     { stdio: "inherit" }
   );
 
-  // Configurer les paramètres VSCode
+  // Add VSCode settings
   console.log("Setting up VSCode settings...");
   fs.mkdirSync(".vscode", { recursive: true });
   fs.copyFileSync(
@@ -90,35 +153,30 @@ try {
     ".vscode/settings.json"
   );
 
-  // Mettre à jour le package.json
+  // Update package.json
   console.log("Updating package.json...");
-  execSync(
-    'npx json -I -f package.json -e \'this.scripts["eslint"]="eslint ."\'',
-    { stdio: "inherit" }
-  );
-  execSync(
-    'npx json -I -f package.json -e \'this.scripts["eslint:debug"]="eslint --debug ."\'',
-    { stdio: "inherit" }
-  );
-  execSync(
-    'npx json -I -f package.json -e \'this.scripts["eslint:fix"]="eslint --fix ."\'',
-    { stdio: "inherit" }
-  );
-  execSync(
-    'npx json -I -f package.json -e \'this.scripts["format:write"]="prettier --write ."\'',
-    { stdio: "inherit" }
-  );
-  execSync(
-    'npx json -I -f package.json -e \'this.scripts["format:check"]="prettier --check ."\'',
-    { stdio: "inherit" }
-  );
-  execSync(
-    'npx json -I -f package.json -e \'this.scripts["prepare"]="husky"\'',
-    { stdio: "inherit" }
-  );
 
-  // Copier les fichiers de composants et de police
-  console.log("Copying components and font files...");
+  // Read package.json
+  const packageJsonPath = path.join(process.cwd(), "package.json");
+  const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, "utf8"));
+
+  // Add new scripts
+  packageJson.scripts = {
+    ...packageJson.scripts, // Conserver les autres scripts existants
+    eslint: "eslint .",
+    "eslint:debug": "eslint --debug .",
+    "eslint:fix": "eslint --fix .",
+    "format:write": "prettier --write .",
+    "format:check": "prettier --check .",
+    prepare: "husky",
+  };
+
+  // Write the updated in package.json
+  fs.writeFileSync(packageJsonPath, JSON.stringify(packageJson, null, 2));
+  console.log("Updated package.json with new scripts");
+
+  // Add fonts
+  console.log("Copying fonts...");
   fs.rmSync("app/fonts", { recursive: true, force: true });
   fs.mkdirSync("app/fonts", { recursive: true });
 
@@ -127,25 +185,76 @@ try {
     "app/fonts/InterVariable.woff2"
   );
 
-  const componentsDir = path.join(scriptDir, "components");
-  execSync(`cp -r ${componentsDir}/* components`, { stdio: "inherit" });
+  // Add components
+  console.log("Copying components...");
+  const sourceDir = path.join(scriptDir, "components");
+  const destDir = path.join(process.cwd(), "components");
 
-  // Refactorer layout.tsx et page.tsx
+  if (!fs.existsSync(destDir)) {
+    fs.mkdirSync(destDir, { recursive: true });
+  }
+
+  // Read all files and directories to src folder
+  fs.readdirSync(sourceDir).forEach((file) => {
+    const sourceFile = path.join(sourceDir, file);
+    const destFile = path.join(destDir, file);
+
+    // Check if it's a file or a directory
+    const stat = fs.statSync(sourceFile);
+
+    if (stat.isDirectory()) {
+      // If it's a directory, copy it recursively
+      copyDirectory(sourceFile, destFile);
+    } else {
+      // If it's a file, copy it directly
+      fs.copyFileSync(sourceFile, destFile);
+      console.log(`Copied file: ${sourceFile} to ${destFile}`);
+    }
+  });
+
+  // Function to copy directories recursively
+  function copyDirectory(source, destination) {
+    if (!fs.existsSync(destination)) {
+      fs.mkdirSync(destination, { recursive: true });
+    }
+
+    fs.readdirSync(source).forEach((file) => {
+      const srcFile = path.join(source, file);
+      const destFile = path.join(destination, file);
+
+      const stat = fs.statSync(srcFile);
+
+      if (stat.isDirectory()) {
+        copyDirectory(srcFile, destFile);
+      } else {
+        fs.copyFileSync(srcFile, destFile);
+        console.log(`Copied file: ${srcFile} to ${destFile}`);
+      }
+    });
+  }
+
+  // Add data
+  console.log("Copying data...");
+  fs.copyFileSync(
+    path.join(scriptDir, "data/global.data.tsx"),
+    "data/global.data.tsx"
+  );
+
+  // Refactor layout.tsx and page.tsx
   console.log("Refactoring layout.tsx and page.tsx...");
   fs.copyFileSync(path.join(scriptDir, "app/layout.tsx"), "app/layout.tsx");
   fs.copyFileSync(path.join(scriptDir, "app/page.tsx"), "app/page.tsx");
 
-  // Mettre à jour tailwind.config.ts et tsconfig.json
+  // Updating tailwind.config.ts and tsconfig.json
   console.log("Updating tailwind.config.ts and tsconfig.json...");
 
-  // Modifier le fichier tailwind.config.ts
+  // Updating tailwind.config.ts
   const modifyTailwindConfig = () => {
-    const tailwindConfigPath = path.join(__dirname, "tailwind.config.ts");
+    const tailwindConfigPath = path.join(process.cwd(), "tailwind.config.ts");
 
     if (fs.existsSync(tailwindConfigPath)) {
       let tailwindConfig = fs.readFileSync(tailwindConfigPath, "utf8");
 
-      // Modifier le tableau 'content'
       tailwindConfig = tailwindConfig.replace(
         /content:\s*\[[^\]]*\]/,
         `content: [
@@ -162,20 +271,19 @@ try {
     }
   };
 
-  // Modifier le fichier tsconfig.json
+  // Updating tsconfig.json
   const modifyTsconfig = () => {
-    const tsconfigPath = path.join(__dirname, "tsconfig.json");
+    const tsconfigPath = path.join(process.cwd(), "tsconfig.json");
 
     if (fs.existsSync(tsconfigPath)) {
       const tsconfig = JSON.parse(fs.readFileSync(tsconfigPath, "utf8"));
 
-      // Ajouter les alias dans "paths"
       tsconfig.compilerOptions.paths = {
         "@components/*": ["./components/*"],
         "@containers/*": ["./containers/*"],
         "@types/*": ["./types/*"],
         "@app/*": ["./app/*"],
-        ...tsconfig.compilerOptions.paths, // Conserver les autres chemins
+        ...tsconfig.compilerOptions.paths,
       };
 
       // Écrire le fichier JSON modifié
@@ -186,9 +294,14 @@ try {
     }
   };
 
-  // Exécuter les modifications
   modifyTailwindConfig();
   modifyTsconfig();
+
+  // Commit all changes
+  execSync("git add .", { stdio: "inherit" });
+  execSync('git commit -m "chore: rekash boilerplate initial setup"', {
+    stdio: "inherit",
+  });
 
   console.log("Boilerplate setup completed!");
   console.log(`cd ${projectName}`);
