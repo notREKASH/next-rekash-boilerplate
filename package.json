@@ -1,0 +1,15 @@
+{
+  "name": "rekash-next-boilerplate",
+  "version": "1.0.0",
+  "description": "Boilerplate for Next.js with TypeScript, ESLint, Prettier, Husky, and more",
+  "main": "scripts/setup.sh",
+  "bin": {
+    "rekash-next-boilerplate": "scripts/setup.sh"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/notREKASH/next-rekash-boilerplate.git"
+  },
+  "author": "Benmehal Joris",
+  "license": "MIT"
+}
