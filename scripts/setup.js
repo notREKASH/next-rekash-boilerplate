@@ -136,17 +136,58 @@ try {
 
   // Mettre à jour tailwind.config.ts et tsconfig.json
   console.log("Updating tailwind.config.ts and tsconfig.json...");
-  fs.copyFileSync(
-    path.join(scriptDir, "scripts/modify-config.js"),
-    "modify-config.js"
-  );
-  execSync("node modify-config.js", { stdio: "inherit" });
-  fs.rmSync("modify-config.js");
 
-  execSync("git add .", { stdio: "inherit" });
-  execSync('git commit -m "chore: rekash boilerplate initial setup"', {
-    stdio: "inherit",
-  });
+  // Modifier le fichier tailwind.config.ts
+  const modifyTailwindConfig = () => {
+    const tailwindConfigPath = path.join(__dirname, "tailwind.config.ts");
+
+    if (fs.existsSync(tailwindConfigPath)) {
+      let tailwindConfig = fs.readFileSync(tailwindConfigPath, "utf8");
+
+      // Modifier le tableau 'content'
+      tailwindConfig = tailwindConfig.replace(
+        /content:\s*\[[^\]]*\]/,
+        `content: [
+          "./components/**/*.{js,ts,jsx,tsx,mdx}",
+          "./containers/**/*.{js,ts,jsx,tsx,mdx}",
+          "./app/**/*.{js,ts,jsx,tsx,mdx}"
+        ]`
+      );
+
+      fs.writeFileSync(tailwindConfigPath, tailwindConfig);
+      console.log("Modified tailwind.config.ts");
+    } else {
+      console.error("tailwind.config.ts not found");
+    }
+  };
+
+  // Modifier le fichier tsconfig.json
+  const modifyTsconfig = () => {
+    const tsconfigPath = path.join(__dirname, "tsconfig.json");
+
+    if (fs.existsSync(tsconfigPath)) {
+      const tsconfig = JSON.parse(fs.readFileSync(tsconfigPath, "utf8"));
+
+      // Ajouter les alias dans "paths"
+      tsconfig.compilerOptions.paths = {
+        "@components/*": ["./components/*"],
+        "@containers/*": ["./containers/*"],
+        "@types/*": ["./types/*"],
+        "@app/*": ["./app/*"],
+        ...tsconfig.compilerOptions.paths, // Conserver les autres chemins
+      };
+
+      // Écrire le fichier JSON modifié
+      fs.writeFileSync(tsconfigPath, JSON.stringify(tsconfig, null, 2));
+      console.log("Modified tsconfig.json");
+    } else {
+      console.error("tsconfig.json not found");
+    }
+  };
+
+  // Exécuter les modifications
+  modifyTailwindConfig();
+  modifyTsconfig();
 
   console.log("Boilerplate setup completed!");
   console.log(`cd ${projectName}`);
