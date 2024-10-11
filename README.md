@@ -20,5 +20,5 @@ This project is a boilerplate for Nextjs projects, it includes a basic setup for
 ## How to use
 
 ```bash
-npx rekash-next-boilerplate <project-name>
+npx create-rekash-next-app <project-name>
 ```
