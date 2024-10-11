@@ -64,9 +64,10 @@ try {
 
   // Installer Commitlint et Commitizen
   console.log("Setting up commitlint and commitizen...");
-  execSync("npm install --save-dev @commitlint/{config-conventional,cli}", {
-    stdio: "inherit",
-  });
+  execSync(
+    'npm install --save-dev "@commitlint/cli" "@commitlint/config-conventional"',
+    { stdio: "inherit" }
+  );
   fs.copyFileSync(
     path.join(scriptDir, "templates/commitlint.config.js"),
     "commitlint.config.js"
