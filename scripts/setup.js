@@ -163,7 +163,7 @@ try {
   // Add new scripts
   packageJson.scripts = {
     ...packageJson.scripts, // Conserver les autres scripts existants
-    eslint: "eslint .",
+    "eslint:check": "eslint .",
     "eslint:debug": "eslint --debug .",
     "eslint:fix": "eslint --fix .",
     "format:write": "prettier --write .",
