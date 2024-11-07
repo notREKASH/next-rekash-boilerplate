@@ -434,6 +434,28 @@ npm run lint"`,
     "app/sign-in/error/page.tsx"
   );
 
+  // Commit all changes
+  execSync("git add .", { stdio: "inherit" });
+  execSync('git commit -m "feat: sign-in page and associated pages"', {
+    stdio: "inherit",
+  });
+
+  // Create GitHub Actions workflows
+  fs.copyFileSync(
+    path.join(scriptDir, "templates/code-check.yml"),
+    ".github/workflows/code-check.yml"
+  );
+  fs.copyFileSync(
+    path.join(scriptDir, "templates/release.yml"),
+    ".github/workflows/release.yml"
+  );
+
+  // Commit all changes
+  execSync("git add .", { stdio: "inherit" });
+  execSync('git commit -m "feat: gitHub actions workflows"', {
+    stdio: "inherit",
+  });
+
   console.log("Boilerplate setup completed!");
   console.log(`cd ${projectName}`);
   console.log("You can now start the development server with 'npm run dev'");
