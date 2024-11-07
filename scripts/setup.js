@@ -104,10 +104,6 @@ try {
     path.join(scriptDir, "templates/.eslintrc.js"),
     ".eslintrc.js"
   );
-  fs.copyFileSync(
-    path.join(scriptDir, "templates/eslint.config.js"),
-    "eslint.config.js"
-  );
   fs.copyFileSync(path.join(scriptDir, "templates/.prettierrc"), ".prettierrc");
 
   // Setup Husky and lint-staged
@@ -163,6 +159,7 @@ try {
   // Add new scripts
   packageJson.scripts = {
     ...packageJson.scripts, // Conserver les autres scripts existants
+    build: "next build && prisma generate",
     "eslint:check": "eslint .",
     "eslint:debug": "eslint --debug .",
     "eslint:fix": "eslint --fix .",
