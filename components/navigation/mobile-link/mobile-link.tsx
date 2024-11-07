@@ -10,13 +10,13 @@ interface MobileLinkProps extends LinkProps {
   [key: string]: unknown;
 }
 
-export function MobileLink({
+export const MobileLink = ({
   href,
   children,
   className,
   onOpenChange,
   ...props
-}: MobileLinkProps) {
+}: MobileLinkProps) => {
   const router = useRouter();
 
   return (
@@ -31,4 +31,4 @@ export function MobileLink({
       {children}
     </Link>
   );
-}
+};

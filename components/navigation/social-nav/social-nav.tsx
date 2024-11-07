@@ -3,7 +3,7 @@ import { globalData } from "@/data/global.data";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
 
-export function SocialNav({ className }: { className?: string }) {
+export const SocialNav = ({ className }: { className?: string }) => {
   return (
     <>
       {globalData.socialLinks.map((link) => (
@@ -24,4 +24,4 @@ export function SocialNav({ className }: { className?: string }) {
       ))}
     </>
   );
-}
+};

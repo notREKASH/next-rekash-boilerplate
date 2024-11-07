@@ -1,7 +1,7 @@
 import { globalData } from "@/data/global.data";
 import Link from "next/link";
 
-export function SiteFooter() {
+export const SiteFooter = () => {
   return (
     <footer>
       <div className="mb-6 mt-14 flex flex-col items-center">
@@ -26,4 +26,4 @@ export function SiteFooter() {
       </div>
     </footer>
   );
-}
+};

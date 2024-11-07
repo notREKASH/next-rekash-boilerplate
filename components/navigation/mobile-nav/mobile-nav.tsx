@@ -9,7 +9,7 @@ import { MobileLink } from "@/components/navigation/mobile-link/mobile-link";
 import Link from "next/link";
 import Image from "next/image";
 
-export function MobileNav() {
+export const MobileNav = () => {
   const [open, setOpen] = useState(false);
 
   return (
@@ -51,4 +51,4 @@ export function MobileNav() {
       </SheetContent>
     </Sheet>
   );
-}
+};
