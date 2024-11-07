@@ -1,14 +1,13 @@
-/* eslint-disable no-undef */
+// eslint-disable-next-line no-undef
 module.exports = {
   root: true,
   extends: [
     "next/core-web-vitals",
-    "next/typescript",
+    "plugin:@typescript-eslint/recommended",
     "plugin:tailwindcss/recommended",
   ],
-  rules: {
-    "react/no-unescaped-entities": "error",
-  },
+  parser: "@typescript-eslint/parser",
+  plugins: ["@typescript-eslint"],
   overrides: [
     {
       files: ["*.ts", "*.tsx", "*.js"],
