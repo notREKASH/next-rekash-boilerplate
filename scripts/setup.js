@@ -112,9 +112,13 @@ try {
   execSync("npm install", { stdio: "inherit" });
   fs.rmSync(".husky/pre-commit");
   execSync("npm install --save-dev lint-staged", { stdio: "inherit" });
-  execSync('npx husky add .husky/pre-commit "npx lint-staged npm run lint"', {
-    stdio: "inherit",
-  });
+  execSync(
+    `npx husky add .husky/pre-commit "npx lint-staged \
+npm run lint"`,
+    {
+      stdio: "inherit",
+    }
+  );
 
   fs.copyFileSync(
     path.join(scriptDir, "templates/.lintstagedrc.json"),
