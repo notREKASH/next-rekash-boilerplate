@@ -84,6 +84,10 @@ try {
   execSync("npx shadcn@latest add button", { stdio: "inherit" });
   execSync("npx shadcn@latest add sheet", { stdio: "inherit" });
   execSync("npx shadcn@latest add dropdown-menu", { stdio: "inherit" });
+  execSync("npx shadcn@latest add card", { stdio: "inherit" });
+  execSync("npx shadcn@latest add input", { stdio: "inherit" });
+  execSync("npx shadcn@latest add form", { stdio: "inherit" });
+  execSync("npx shadcn@latest add label", { stdio: "inherit" });
 
   // Install react-icons and next-themes
   execSync("npm install react-icons next-themes", { stdio: "inherit" });
@@ -317,6 +321,12 @@ npm run lint"`,
     # Google Provider
     GOOGLE_ID=your-google-id
     GOOGLE_SECRET=your-google-secret
+
+    # Resend Provider (this config is for testing purposes only)
+    # check https://authjs.dev/getting-started/authentication/email
+    AUTH_RESEND_SERVER=https://api.resend.com/email
+    AUTH_RESEND_KEY=your-resend-key
+    FROM_EMAIL=onboarding@resend.dev
 `;
 
   fs.appendFileSync(".env.local", additionalEnvContent);
@@ -380,6 +390,49 @@ npm run lint"`,
   execSync('git commit -m "feat: auth.js and prisma setup"', {
     stdio: "inherit",
   });
+
+  // Create sign-in page
+  fs.mkdirSync("app/sign-in", { recursive: true });
+  fs.copyFileSync(
+    path.join(scriptDir, "app/sign-in/layout.tsx"),
+    "app/sign-in/layout.tsx"
+  );
+  fs.copyFileSync(
+    path.join(scriptDir, "app/sign-in/page.tsx"),
+    "app/sign-in/page.tsx"
+  );
+
+  // Import sign-in components
+  fs.mkdirSync("modules/sign-in", { recursive: true });
+  fs.mkdirSync("modules/sign-in/components", { recursive: true });
+  fs.mkdirSync("modules/sign-in/form", { recursive: true });
+
+  fs.copyFileSync(
+    path.join(scriptDir, "modules/sign-in/components/sign-in.tsx"),
+    "modules/sign-in/components/sign-in.tsx"
+  );
+  fs.copyFileSync(
+    path.join(scriptDir, "modules/sign-in/form/sign-in-form.tsx"),
+    "modules/sign-in/form/sign-in-form.tsx"
+  );
+  fs.copyFileSync(
+    path.join(scriptDir, "modules/sign-in/components/oauth/oauth.tsx"),
+    "modules/sign-in/components/oauth/oauth.tsx"
+  );
+
+  // Create verify-request page
+  fs.mkdirSync("app/sign-in/verify-request", { recursive: true });
+  fs.copyFileSync(
+    path.join(scriptDir, "app/sign-in/verify-request/page.tsx"),
+    "app/sign-in/verify-request/page.tsx"
+  );
+
+  // Create error page
+  fs.mkdirSync("app/sign-in/error", { recursive: true });
+  fs.copyFileSync(
+    path.join(scriptDir, "app/sign-in/error/page.tsx"),
+    "app/sign-in/error/page.tsx"
+  );
 
   console.log("Boilerplate setup completed!");
   console.log(`cd ${projectName}`);
