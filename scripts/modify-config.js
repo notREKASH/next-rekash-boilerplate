@@ -14,7 +14,10 @@ const modifyTailwindConfig = () => {
       `content: [
         "./components/**/*.{js,ts,jsx,tsx,mdx}",
         "./containers/**/*.{js,ts,jsx,tsx,mdx}",
-        "./app/**/*.{js,ts,jsx,tsx,mdx}"
+        "./data/**/*.{js,ts,jsx,tsx,mdx}",
+        "./app/**/*.{js,ts,jsx,tsx,mdx}",
+        "./lib/**/*.{js,ts,jsx,tsx,mdx}",
+        "./modules/**/*.{js,ts,jsx,tsx,mdx}",
       ]`
     );
 
@@ -36,8 +39,12 @@ const modifyTsconfig = () => {
     tsconfig.compilerOptions.paths = {
       "@components/*": ["./components/*"],
       "@containers/*": ["./containers/*"],
+      "@modules/*": ["./modules/*"],
+      "@data/*": ["./data/*"],
       "@types/*": ["./types/*"],
       "@app/*": ["./app/*"],
+      "@auth/*": ["./auth/*"],
+      "@/*": ["./*"],
       ...tsconfig.compilerOptions.paths, // Conserver les autres chemins
     };
 

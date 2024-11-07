@@ -304,6 +304,83 @@ npm run lint"`,
     stdio: "inherit",
   });
 
+  // Install Auth.js
+  console.log("Installing Auth.js...");
+  execSync("npm install next-auth@beta", { stdio: "inherit" });
+
+  // Setup Auth.js env
+  execSync("npx auth secret", { stdio: "inherit" });
+
+  // Append additional environment variables to .env.local
+  const additionalEnvContent = `
+
+    # Google Provider
+    GOOGLE_ID=your-google-id
+    GOOGLE_SECRET=your-google-secret
+`;
+
+  fs.appendFileSync(".env.local", additionalEnvContent);
+  console.log("Added additional environment variables to .env.local");
+
+  // Configure Auth.js with Google provider
+  fs.copyFileSync(path.join(scriptDir, "templates/auth.ts"), "auth.ts");
+
+  fs.mkdirSync("app/api/auth/[...nextauth]", { recursive: true });
+  fs.copyFileSync(
+    path.join(scriptDir, "app/api/auth/[...nextauth]/route.ts"),
+    "app/api/auth/[...nextauth]/route.ts"
+  );
+
+  // Configure Authentication Providers
+  fs.copyFileSync(
+    path.join(scriptDir, "templates/providers.tsx"),
+    "components/providers/providers.tsx"
+  );
+
+  // Install Prisma
+  console.log("Installing Prisma...");
+  execSync("npm install tsx @types/node --save-dev", { stdio: "inherit" });
+
+  execSync("npm install @prisma/client @auth/prisma-adapter", {
+    stdio: "inherit",
+  });
+  execSync("npm install prisma --save-dev", { stdio: "inherit" });
+
+  // Create .env file
+  const envContent = `
+  # Update with your supabase database credentials (https://supabase.com/dashboard/project/qqfnlxfavikohkielocv)
+  # Don't forget to replace PORT by 5432
+  DATABASE_URL=postgresql://USER:PASSWORD@HOST:PORT/DATABASE?schema=SCHEMA
+  `;
+
+  // Write the .env file
+  fs.writeFileSync(".env", envContent);
+
+  // Modify .gitignore
+  fs.appendFileSync(".gitignore", "\n.env");
+
+  // Create Prisma singleton
+  fs.copyFileSync(path.join(scriptDir, "lib/prisma.ts"), "lib/prisma.ts");
+
+  // Create Prisma schema
+  fs.mkdirSync("prisma", { recursive: true });
+  fs.copyFileSync(
+    path.join(scriptDir, "prisma/schema.prisma"),
+    "prisma/schema.prisma"
+  );
+
+  // Apply schema to database
+  execSync("npm exec prisma migrate dev --name init", { stdio: "inherit" });
+
+  // Generate Prisma client
+  execSync("npm exec prisma generate", { stdio: "inherit" });
+
+  // Commit all changes
+  execSync("git add .", { stdio: "inherit" });
+  execSync('git commit -m "feat: auth.js and prisma setup"', {
+    stdio: "inherit",
+  });
+
   console.log("Boilerplate setup completed!");
   console.log(`cd ${projectName}`);
   console.log("You can now start the development server with 'npm run dev'");
