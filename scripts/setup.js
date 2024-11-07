@@ -18,7 +18,7 @@ console.log(`Creating project ${projectName}`);
 try {
   // Create the project with Next.js
   execSync(
-    `npx create-next-app@latest ${projectName} --typescript --eslint --tailwind --no-src-dir --app --no-import-alias`,
+    `npx create-next-app@14.2.17 ${projectName} --typescript --eslint --tailwind --no-src-dir --app --no-import-alias`,
     { stdio: "inherit" }
   );
 
@@ -81,13 +81,11 @@ try {
 
   // Install shadcn/ui with default settings and add components
   execSync("npx shadcn@latest init -d", { stdio: "inherit" });
-  execSync("npx shadcn@latest add button", { stdio: "inherit" });
   execSync("npx shadcn@latest add sheet", { stdio: "inherit" });
   execSync("npx shadcn@latest add dropdown-menu", { stdio: "inherit" });
   execSync("npx shadcn@latest add card", { stdio: "inherit" });
   execSync("npx shadcn@latest add input", { stdio: "inherit" });
   execSync("npx shadcn@latest add form", { stdio: "inherit" });
-  execSync("npx shadcn@latest add label", { stdio: "inherit" });
 
   // Install react-icons and next-themes
   execSync("npm install react-icons next-themes", { stdio: "inherit" });
